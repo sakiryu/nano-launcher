@@ -1,2 +1,2 @@
-# nano-launcher
-Customizable game launcher build on top of CEFSharp
+# Nano Launcher
+(WIP) Customizable game launcher built on top of CEFSharp
