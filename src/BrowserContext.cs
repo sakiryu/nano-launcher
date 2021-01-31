@@ -1,11 +1,14 @@
 ﻿using CefSharp;
 using CefSharp.BrowserSubprocess;
+using CefSharp.Enums;
 using CefSharp.JavascriptBinding;
 using CefSharp.SchemeHandler;
 using CefSharp.WinForms;
+using NanoLauncher.src;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
@@ -19,18 +22,23 @@ namespace NanoLauncher
         }
     }
 
-    public class BrowserContext
+    public class BrowserContext : NativeWindow
     {
-       // public CefSettings Settings { get; private set; }
+        private Action<Message> _forwardAction;
         public ChromiumWebBrowser Browser { get; private set; }
-      //  public BrowserSubprocessExecutable Subprocess { get; private set; }
 
         static BrowserContext()
         {
             CefSharpSettings.SubprocessExitIfParentProcessClosed = true;
             CefSharp.Cef.EnableHighDPISupport();
 
-            var settings = new CefSettings();
+            var settings = new CefSettings()
+            {
+                LogSeverity = LogSeverity.Verbose,
+                BrowserSubprocessPath = Process.GetCurrentProcess().MainModule.FileName,
+                CachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Nano\\Cache")
+            };
+
             settings.CefCommandLineArgs.Add("no-proxy-server");
             settings.CefCommandLineArgs.Add("disable-plugins-discovery");
             settings.CefCommandLineArgs.Add("disable-extensions");
@@ -43,10 +51,10 @@ namespace NanoLauncher
             settings.RegisterScheme(new CefCustomScheme
             {
                 SchemeName = "localfolder",
-                DomainName = "cefsharp",
+                DomainName = "nano",
                 SchemeHandlerFactory = new FolderSchemeHandlerFactory(
-                    rootFolder: @"D:\Users\Haise\source\repos\NanoLauncher\ui",
-                    hostName: "cefsharp"
+                    rootFolder: @"ui",
+                    hostName: "nano"
                 )
             });
 
@@ -55,46 +63,20 @@ namespace NanoLauncher
 
         public BrowserContext()
         {
-            //   CefSharp.Cef.EnableHighDPISupport();
-
-            //Subprocess = new BrowserSubprocessExecutable();
-            //  Subprocess.Main(new[] { string.Empty });
-
-            // Settings = new CefSettings()
-            // {
-            //   //  BrowserSubprocessPath = Process.GetCurrentProcess().MainModule.FileName,
-            //    // MultiThreadedMessageLoop = true
-            // };
-            //
-            // Settings.CefCommandLineArgs.Add("no-proxy-server");
-            // Settings.CefCommandLineArgs.Add("disable-plugins-discovery");
-            // Settings.CefCommandLineArgs.Add("disable-extensions");
-            // Settings.CefCommandLineArgs.Add("disable-pdf-extension");
-            // Settings.CefCommandLineArgs.Add("disable-demo-mode");
-            // Settings.CefCommandLineArgs.Add("disable-default-apps");
-            // Settings.CefCommandLineArgs.Add("disable-dinosaur-easter-egg");
-            // Settings.CefCommandLineArgs.Add("disable-features", "ExtendedMouseButtons");
-            //
-            // Settings.RegisterScheme(new CefCustomScheme
-            // {
-            //     SchemeName = "localfolder",
-            //     DomainName = "cefsharp",
-            //     SchemeHandlerFactory = new FolderSchemeHandlerFactory(
-            //         rootFolder: @"D:\Users\Haise\source\repos\NanoLauncher\ui",
-            //         hostName: "cefsharp"
-            //     )
-            // });
-            //
-            // CefSharp.Cef.Initialize(Settings, performDependencyCheck: true, browserProcessHandler: null);
-
-            Browser = new ChromiumWebBrowser("localfolder://cefsharp/")
+            Browser = new ChromiumWebBrowser("localfolder://nano/")
             {
                 Dock = DockStyle.Fill
             };
 
-            //Browser.JavascriptObjectRepository.Register("boundEventHandler", eventHandler, true, BindingOptions.DefaultBinder);
+            Browser.DragHandler = new DragHandler();
 
-           // Browser.JavascriptObjectRepository.Register("testClass", new TestClass(), true, BindingOptions.DefaultBinder);
+            Browser.IsBrowserInitializedChanged += (sender, args) =>
+            {
+                if (Browser.IsBrowserInitialized)
+                {
+            
+                }
+            };
 
             Browser.JavascriptObjectRepository.ResolveObject += (sender, args) =>
             {
@@ -109,9 +91,6 @@ namespace NanoLauncher
             {
                 if (!e.IsLoading)
                 {
-                   // Browser.JavascriptObjectRepository.Register("testClass", new TestClass(), true);
-                    //Browser.ShowDevTools();
-                    //Browser.ExecuteScriptAsync("objectTest.messageShow(\"myObject\");");
                     //Stuff...
                 }
                 else
