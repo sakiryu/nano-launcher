@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
@@ -11,32 +12,42 @@ namespace NanoLauncher
     public partial class BrowserForm : Form
     {
         private readonly BrowserContext bContext;
-        private Rectangle rTitleBar;
 
-        private const int WM_NCHITTEST = 0x84;
-        private const int HT_CAPTION = 0x2;
+        public enum WindowEvent : int
+        {
+            MouseMove = 0x0200,
+            MouseLeave = 0x02A3,
+            LeftButtonDown = 0x0201,
+            LeftButtonUp = 0x0202,
+            NclButtonDown = 0xA1,
+            Caption = 0x2
+        }
+
+        [DllImport("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        [DllImport("user32.dll")]
+        public static extern bool ReleaseCapture();
+
+        public delegate void SendHandleMessageDelegate();
+
+        public void SendHandleMessage()
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new SendHandleMessageDelegate(SendHandleMessage));
+            }
+            else
+            {
+                SendMessage(Handle, (int)WindowEvent.NclButtonDown, (int)WindowEvent.Caption, 0);
+            }
+        }
 
         public BrowserForm()
         {
             InitializeComponent();
-            rTitleBar = new Rectangle(0, 0, Width, 30);
-            Height -= rTitleBar.Height;
             
             bContext = new BrowserContext();
             Controls.Add(bContext.Browser);
-        }
-
-        protected override void DefWndProc(ref Message m)
-        {
-            if(m.Msg == WM_NCHITTEST)
-            {
-                var pt = new Point(m.LParam.ToInt32());
-                if(rTitleBar.Contains(pt))
-                {
-                    m.Result = new IntPtr(HT_CAPTION);
-                }
-            }
-            base.DefWndProc(ref m);
         }
     }
 }
