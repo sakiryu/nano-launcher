@@ -25,6 +25,13 @@
       <Private>true</Private>
     </Reference>
   </ItemGroup>
+  
+  <ItemGroup>
+    <ContentWithTargetPath Include="ui\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>ui\%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
+    </ContentWithTargetPath>
+</ItemGroup>
 
   <!-- Include CefSharp.BrowserSubprocess.Core so we can selfhost the BrowserSubProcess using our exe -->
   <Choose>
