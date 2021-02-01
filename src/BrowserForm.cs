@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace NanoLauncher
 {
@@ -45,7 +40,7 @@ namespace NanoLauncher
         public BrowserForm()
         {
             InitializeComponent();
-            
+
             bContext = new BrowserContext();
             Controls.Add(bContext.Browser);
         }

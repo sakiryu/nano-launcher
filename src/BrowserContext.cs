@@ -1,16 +1,11 @@
-﻿using CefSharp;
-using CefSharp.BrowserSubprocess;
-using CefSharp.Enums;
-using CefSharp.JavascriptBinding;
-using CefSharp.SchemeHandler;
-using CefSharp.WinForms;
-using NanoLauncher.src;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System;
+using CefSharp;
 using System.IO;
-using System.Text;
+using NanoLauncher.src;
+using CefSharp.WinForms;
+using System.Diagnostics;
 using System.Windows.Forms;
+using CefSharp.SchemeHandler;
 
 namespace NanoLauncher
 {
@@ -20,6 +15,8 @@ namespace NanoLauncher
         {
             MessageBox.Show(t);
         }
+
+        public void Close() => Environment.Exit(1);
     }
 
     public class BrowserContext : NativeWindow
@@ -30,7 +27,7 @@ namespace NanoLauncher
         static BrowserContext()
         {
             CefSharpSettings.SubprocessExitIfParentProcessClosed = true;
-            CefSharp.Cef.EnableHighDPISupport();
+            Cef.EnableHighDPISupport();
 
             var settings = new CefSettings()
             {
@@ -58,7 +55,7 @@ namespace NanoLauncher
                 )
             });
 
-            CefSharp.Cef.Initialize(settings, performDependencyCheck: true, browserProcessHandler: null);
+            Cef.Initialize(settings, performDependencyCheck: true, browserProcessHandler: null);
         }
 
         public BrowserContext()
