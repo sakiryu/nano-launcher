@@ -5,10 +5,12 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <Platforms>AnyCPU;x86;x64</Platforms>
+    <ApplicationIcon>nano.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CefSharp.WinForms" Version="86.0.241" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +34,12 @@
       <TargetPath>ui\%(RecursiveDir)\%(Filename)%(Extension)</TargetPath>
     </ContentWithTargetPath>
 </ItemGroup>
+  
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
   <!-- Include CefSharp.BrowserSubprocess.Core so we can selfhost the BrowserSubProcess using our exe -->
   <Choose>
