@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 
-namespace NanoLauncher.src
+namespace NanoLauncher
 {
     public class DragHandler : IDragHandler
     {
