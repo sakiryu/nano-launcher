@@ -1,7 +1,6 @@
 ﻿using System;
 using CefSharp;
 using System.IO;
-using NanoLauncher.src;
 using CefSharp.WinForms;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -9,19 +8,11 @@ using CefSharp.SchemeHandler;
 
 namespace NanoLauncher
 {
-    public class TestClass
-    {
-        public void Message(string t)
-        {
-            MessageBox.Show(t);
-        }
-
-        public void Close() => Environment.Exit(1);
-    }
 
     public class BrowserContext : NativeWindow
     {
         private Action<Message> _forwardAction;
+        private LauncherContext _launcher;
         public ChromiumWebBrowser Browser { get; private set; }
 
         static BrowserContext()
@@ -58,8 +49,10 @@ namespace NanoLauncher
             Cef.Initialize(settings, performDependencyCheck: true, browserProcessHandler: null);
         }
 
-        public BrowserContext()
+        public BrowserContext(LauncherContext launcher)
         {
+            _launcher = launcher;
+
             Browser = new ChromiumWebBrowser("localfolder://nano/")
             {
                 Dock = DockStyle.Fill
@@ -77,9 +70,10 @@ namespace NanoLauncher
 
             Browser.JavascriptObjectRepository.ResolveObject += (sender, args) =>
             {
-                if (args.ObjectName == "testClass")
+                var name = typeof(LauncherContext).Name;
+                if (args.ObjectName == name)
                 {
-                    args.ObjectRepository.Register("testClass", new TestClass(), true, BindingOptions.DefaultBinder);
+                    args.ObjectRepository.Register(name, _launcher, true, BindingOptions.DefaultBinder);
                 }
             };
 

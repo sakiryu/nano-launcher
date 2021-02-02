@@ -6,7 +6,14 @@ namespace NanoLauncher
 {
     public partial class BrowserForm : Form
     {
-        private readonly BrowserContext bContext;
+        private readonly BrowserContext _browserContext;
+
+        public BrowserForm(BrowserContext browserContext)
+        {
+            InitializeComponent();
+            _browserContext = browserContext;
+            Controls.Add(_browserContext.Browser);
+        }
 
         public enum WindowEvent : int
         {
@@ -35,14 +42,6 @@ namespace NanoLauncher
             {
                 SendMessage(Handle, (int)WindowEvent.NclButtonDown, (int)WindowEvent.Caption, 0);
             }
-        }
-
-        public BrowserForm()
-        {
-            InitializeComponent();
-
-            bContext = new BrowserContext();
-            Controls.Add(bContext.Browser);
         }
     }
 }

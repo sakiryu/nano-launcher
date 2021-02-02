@@ -1,16 +1,14 @@
-using CefSharp;
 using CefSharp.BrowserSubprocess;
 using CefSharp.Internals;
 using CefSharp.RenderProcess;
-using CefSharp.SchemeHandler;
-using CefSharp.WinForms;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 
 namespace NanoLauncher
 {
@@ -24,9 +22,23 @@ namespace NanoLauncher
         {
             if(args.Count() < 5)
             {
+                Application.SetHighDpiMode(HighDpiMode.SystemAware);
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new BrowserForm());
+
+                var builder = GetHostBuilder().Build();
+
+                using (var serviceScope = builder.Services.CreateScope())
+                {
+                    var form = serviceScope.ServiceProvider.GetRequiredService<BrowserForm>();
+                    Application.Run(form);
+                }
+
+                //using (var serviceProvider = services.BuildServiceProvider())
+                //{
+                //    var form = serviceProvider.GetRequiredService<BrowserForm>();
+                //    Application.Run(form);
+                //}
             }
             else
             {
@@ -35,15 +47,25 @@ namespace NanoLauncher
 
         }
 
-        public static int NanoSubProcess(string[] args)
+        private static IHostBuilder GetHostBuilder()
+        {
+            return Host.CreateDefaultBuilder().ConfigureServices(service =>
+            {
+                //var services = new ServiceCollection();
+                service.AddScoped<BrowserForm>();
+                service.AddSingleton<BrowserContext>();
+                service.AddSingleton<LauncherContext>();
+            });
+            //return services;
+        }
+
+        private static int NanoSubProcess(string[] args)
         {
             Debug.WriteLine("BrowserSubprocess starting up with command line: " + string.Join("\n", args));
 
             SubProcess.EnableHighDPISupport();
 
             int result;
-
-
             var type = args.GetArgumentValue(CefSharpArguments.SubProcessTypeArgument);
 
             var parentProcessId = -1;
