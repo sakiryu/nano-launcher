@@ -5,18 +5,18 @@
         <script type="text/javascript">
             (async function ()
             {
-                await CefSharp.BindObjectAsync("testClass");
+                await CefSharp.BindObjectAsync("LauncherContext");
             })();
         </script>
 
     </head>
     <body>
         <nav>
-            <button class="close-btn" onclick="testClass.close()">X</button>
+            <button class="close-btn" onclick="LauncherContext.close()">X</button>
         </nav>
         <iframe width="650" height="370" src="https://www.youtube.com/embed/plq-HjwvOaw?autoplay=1&mute=1&loop=1"></iframe>
         <div class="play-btn-container">
-            <button class="play-btn" onclick="testClass.message('test')">Jogar</button>
+            <button class="play-btn" onclick="undefined">Jogar</button>
         </div>
     </body>
 </html>
