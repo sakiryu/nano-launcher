@@ -44,7 +44,7 @@ namespace NanoLauncher
         private static IHostBuilder GetHostBuilder() =>
             Host.CreateDefaultBuilder().ConfigureServices(service =>
             {
-                //@TODO: Create interfaces for this so DI can be useful
+                //@TODO: Create interfaces for these so DI can be useful
                 service.AddScoped<BrowserForm>();
                 service.AddSingleton<BrowserContext>();
                 service.AddSingleton<LauncherContext>();
