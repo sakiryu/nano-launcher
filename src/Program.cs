@@ -33,12 +33,6 @@ namespace NanoLauncher
                     var form = serviceScope.ServiceProvider.GetRequiredService<BrowserForm>();
                     Application.Run(form);
                 }
-
-                //using (var serviceProvider = services.BuildServiceProvider())
-                //{
-                //    var form = serviceProvider.GetRequiredService<BrowserForm>();
-                //    Application.Run(form);
-                //}
             }
             else
             {
@@ -47,17 +41,14 @@ namespace NanoLauncher
 
         }
 
-        private static IHostBuilder GetHostBuilder()
-        {
-            return Host.CreateDefaultBuilder().ConfigureServices(service =>
+        private static IHostBuilder GetHostBuilder() =>
+            Host.CreateDefaultBuilder().ConfigureServices(service =>
             {
-                //var services = new ServiceCollection();
+                //@TODO: Create interfaces for this so DI can be useful
                 service.AddScoped<BrowserForm>();
                 service.AddSingleton<BrowserContext>();
                 service.AddSingleton<LauncherContext>();
             });
-            //return services;
-        }
 
         private static int NanoSubProcess(string[] args)
         {
