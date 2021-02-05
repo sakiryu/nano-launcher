@@ -8,10 +8,8 @@ using CefSharp.SchemeHandler;
 
 namespace NanoLauncher
 {
-
-    public class BrowserContext : NativeWindow
+    public class BrowserContext
     {
-        private Action<Message> _forwardAction;
         private LauncherContext _launcher;
         public ChromiumWebBrowser Browser { get; private set; }
 
@@ -36,6 +34,7 @@ namespace NanoLauncher
             settings.CefCommandLineArgs.Add("disable-dinosaur-easter-egg");
             settings.CefCommandLineArgs.Add("disable-features", "ExtendedMouseButtons");
 
+            //@TODO: Move UI to server-side
             settings.RegisterScheme(new CefCustomScheme
             {
                 SchemeName = "localfolder",
@@ -59,6 +58,7 @@ namespace NanoLauncher
             };
 
             Browser.DragHandler = new DragHandler();
+            Browser.MenuHandler = new MenuHandler();
 
             Browser.IsBrowserInitializedChanged += (sender, args) =>
             {
