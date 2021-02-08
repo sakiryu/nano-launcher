@@ -2,7 +2,7 @@
 
 namespace NanoLauncher
 {
-    partial class BrowserForm
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
@@ -30,7 +30,7 @@ namespace NanoLauncher
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BrowserForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.SuspendLayout();
             // 
             // BrowserForm

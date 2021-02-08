@@ -6,9 +6,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 
-namespace NanoLauncher
+namespace NanoLauncher.Browser
 {
-    public class DragHandler : IDragHandler
+    public class BrowserDragHandler : IDragHandler
     {
         public Region DraggableRegion { get; set; } = new Region();
         public event Action<Region> _changedRegions;

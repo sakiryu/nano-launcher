@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using NanoLauncher.Browser;
 using Microsoft.Extensions.Configuration;
 
 namespace NanoLauncher
@@ -30,7 +31,7 @@ namespace NanoLauncher
 
                 using (var serviceScope = builder.Services.CreateScope())
                 {
-                    var form = serviceScope.ServiceProvider.GetRequiredService<BrowserForm>();
+                    var form = serviceScope.ServiceProvider.GetRequiredService<MainForm>();
                     Application.Run(form);
                 }
             }
@@ -45,7 +46,7 @@ namespace NanoLauncher
             Host.CreateDefaultBuilder().ConfigureServices(service =>
             {
                 //@TODO: Create interfaces for these so DI can be useful
-                service.AddScoped<BrowserForm>();
+                service.AddScoped<MainForm>();
                 service.AddSingleton<BrowserContext>();
                 service.AddSingleton<LauncherContext>();
             });

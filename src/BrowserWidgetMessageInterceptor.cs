@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace NanoLauncher
+namespace NanoLauncher.Browser
 {
     class BrowserWidgetMessageInterceptor : NativeWindow
     {

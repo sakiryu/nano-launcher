@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Drawing;
 
-namespace NanoLauncher
+namespace NanoLauncher.Browser
 {
+    public delegate void SendHandleMessageDelegate();
+
     public class BrowserContext : ChromiumWebBrowser
     {
-       // private BrowserWidgetMessageInterceptor _messageInterceptor;
         private LauncherContext _launcher;
-       // public ChromiumWebBrowser Browser { get; private set; }
 
         static BrowserContext()
         {
@@ -57,8 +57,9 @@ namespace NanoLauncher
             _launcher = launcher;
 
             Dock = DockStyle.Fill;
-            DragHandler = new DragHandler();
-            MenuHandler = new MenuHandler();
+            DragHandler = new BrowserDragHandler();
+            MenuHandler = new BrowserMenuHandler();
+            IsBrowserInitializedChanged += OnBrowserInitializedChanged;
 
             JavascriptObjectRepository.ResolveObject += (sender, args) =>
             {
@@ -68,19 +69,28 @@ namespace NanoLauncher
                     args.ObjectRepository.Register(name, _launcher, true, BindingOptions.DefaultBinder);
                 }
             };
+        }
 
+        public SendHandleMessageDelegate SendHandleMessage { get; set; }
 
-            LoadingStateChanged += (object s, LoadingStateChangedEventArgs e) =>
+        private void OnBrowserInitializedChanged(object sender, EventArgs args)
+        {
+            if (IsBrowserInitialized)
             {
-                if (!e.IsLoading)
+                BrowserWidgetMessageInterceptor.MessageLoop(this, (message) =>
                 {
-                    //Stuff...
-                }
-                else
-                {
-                    //Stuff...
-                }
-            };
+                    if (message.Msg == (int)Event.LeftButtonDown)
+                    {
+                        var point = new Point(message.LParam.ToInt32());
+                        var dragHandler = DragHandler as BrowserDragHandler;
+                        if (dragHandler != null && dragHandler.DraggableRegion.IsVisible(point))
+                        {
+                            Native.ReleaseCapture();
+                            SendHandleMessage();
+                        }
+                    }
+                });
+            }
         }
     }
 }

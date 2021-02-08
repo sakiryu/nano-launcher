@@ -1,8 +1,8 @@
 ﻿using CefSharp;
 
-namespace NanoLauncher
+namespace NanoLauncher.Browser
 {
-    public class MenuHandler : IContextMenuHandler
+    public class BrowserMenuHandler : IContextMenuHandler
     {
         public void OnBeforeContextMenu(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IContextMenuParams parameters, IMenuModel model) =>
             model.Clear();
