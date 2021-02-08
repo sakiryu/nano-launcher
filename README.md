@@ -6,4 +6,7 @@ This project aims to provide a simple yet fully customizable launcher for privat
 ## Current state
 ![Preview](img/preview.png)
 
+## Goal state
+![Preview](img/goal.png)
+
 
