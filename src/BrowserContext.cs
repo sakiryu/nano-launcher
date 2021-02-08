@@ -5,13 +5,17 @@ using CefSharp.WinForms;
 using System.Diagnostics;
 using System.Windows.Forms;
 using CefSharp.SchemeHandler;
+using System.Threading.Tasks;
+using System.Runtime.InteropServices;
+using System.Drawing;
 
 namespace NanoLauncher
 {
-    public class BrowserContext
+    public class BrowserContext : ChromiumWebBrowser
     {
+       // private BrowserWidgetMessageInterceptor _messageInterceptor;
         private LauncherContext _launcher;
-        public ChromiumWebBrowser Browser { get; private set; }
+       // public ChromiumWebBrowser Browser { get; private set; }
 
         static BrowserContext()
         {
@@ -48,27 +52,15 @@ namespace NanoLauncher
             Cef.Initialize(settings, performDependencyCheck: true, browserProcessHandler: null);
         }
 
-        public BrowserContext(LauncherContext launcher)
+        public BrowserContext(LauncherContext launcher) : base("localfolder://nano/")
         {
             _launcher = launcher;
 
-            Browser = new ChromiumWebBrowser("localfolder://nano/")
-            {
-                Dock = DockStyle.Fill
-            };
+            Dock = DockStyle.Fill;
+            DragHandler = new DragHandler();
+            MenuHandler = new MenuHandler();
 
-            Browser.DragHandler = new DragHandler();
-            Browser.MenuHandler = new MenuHandler();
-
-            Browser.IsBrowserInitializedChanged += (sender, args) =>
-            {
-                if (Browser.IsBrowserInitialized)
-                {
-            
-                }
-            };
-
-            Browser.JavascriptObjectRepository.ResolveObject += (sender, args) =>
+            JavascriptObjectRepository.ResolveObject += (sender, args) =>
             {
                 var name = typeof(LauncherContext).Name;
                 if (args.ObjectName == name)
@@ -78,7 +70,7 @@ namespace NanoLauncher
             };
 
 
-            Browser.LoadingStateChanged += (object s, LoadingStateChangedEventArgs e) =>
+            LoadingStateChanged += (object s, LoadingStateChangedEventArgs e) =>
             {
                 if (!e.IsLoading)
                 {

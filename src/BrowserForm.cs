@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Drawing;
 
 namespace NanoLauncher
 {
@@ -12,36 +13,41 @@ namespace NanoLauncher
         {
             InitializeComponent();
             _browserContext = browserContext;
-            Controls.Add(_browserContext.Browser);
-        }
-
-        public enum WindowEvent : int
-        {
-            MouseMove = 0x0200,
-            MouseLeave = 0x02A3,
-            LeftButtonDown = 0x0201,
-            LeftButtonUp = 0x0202,
-            NclButtonDown = 0xA1,
-            Caption = 0x2
-        }
-
-        [DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
-        [DllImport("user32.dll")]
-        public static extern bool ReleaseCapture();
-
-        public delegate void SendHandleMessageDelegate();
-
-        public void SendHandleMessage()
-        {
-            if (InvokeRequired)
+            _browserContext.IsBrowserInitializedChanged += (sender, args) =>
             {
-                Invoke(new SendHandleMessageDelegate(SendHandleMessage));
-            }
-            else
-            {
-                SendMessage(Handle, (int)WindowEvent.NclButtonDown, (int)WindowEvent.Caption, 0);
-            }
+                if (_browserContext.IsBrowserInitialized)
+                {
+                    BrowserWidgetMessageInterceptor.MessageLoop(_browserContext, (message) =>
+                    {
+                        if (message.Msg == (int)Event.LeftButtonDown)
+                        {
+                            var point = new Point(message.LParam.ToInt32());
+                            var dragHandler = _browserContext.DragHandler as DragHandler;
+                            if (dragHandler.DraggableRegion.IsVisible(point))
+                            {
+                                Native.ReleaseCapture();
+                                SendHandleMessage();
+                            }
+                        }
+                    });
+                }
+            };
+
+            Controls.Add(_browserContext);
         }
+
+       public delegate void SendHandleMessageDelegate();
+
+       public void SendHandleMessage()
+       {
+           if (InvokeRequired)
+           {
+               Invoke(new SendHandleMessageDelegate(SendHandleMessage));
+           }
+           else
+           {
+               Native.SendMessage(Handle, (int)Event.NclButtonDown, (int)Event.Caption, 0);
+           }
+       }
     }
 }
